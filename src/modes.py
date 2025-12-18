@@ -96,9 +96,33 @@ class LinkedIn(BaseMode):
             self._t = self.context.scroll.get_width()
 
 
+class MerryChristmas(BaseMode):
+    name = 'merrychristmas'
+
+    def __init__(self, context) -> None:
+        super().__init__(context)
+        self.text = "MERRY CHRISTMAS!!!"
+    
+    def reset(self) -> None:
+        self._t = self.context.scroll.get_width()
+        self.context.graphics.set_font("bitmap8")
+        self._wrap = -self.context.graphics.measure_text(self.text, scale=0)
+
+    def run_tick(self):
+        self.context.graphics.set_pen(0)
+        self.context.graphics.clear()
+        self.context.graphics.set_pen(self.context.brightness.value)
+        self.context.graphics.text(self.text, self._t, 0, scale=1, spacing=1)
+        self.context.scroll.update(self.context.graphics)
+        self._t -= 1
+        time.sleep(0.1)
+        if self._t <= self._wrap:
+            self._t = self.context.scroll.get_width()
+
+
 class Modes:
     filename = 'mode.txt'
-    mode_classes = [LinkedIn]
+    mode_classes = [LinkedIn, MerryChristmas]
 
     def __init__(self, context) -> None:
         self.context = context
