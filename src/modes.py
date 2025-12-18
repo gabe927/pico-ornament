@@ -91,7 +91,6 @@ class LinkedIn(BaseMode):
         self.context.graphics.text(self.text, self._t, 0, scale=1, spacing=1)
         self.context.scroll.update(self.context.graphics)
         self._t -= 1
-        time.sleep(0.1)
         if self._t <= self._wrap:
             self._t = self.context.scroll.get_width()
 
@@ -115,7 +114,6 @@ class MerryChristmas(BaseMode):
         self.context.graphics.text(self.text, self._t, 0, scale=1, spacing=1)
         self.context.scroll.update(self.context.graphics)
         self._t -= 1
-        time.sleep(0.1)
         if self._t <= self._wrap:
             self._t = self.context.scroll.get_width()
 

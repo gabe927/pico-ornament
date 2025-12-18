@@ -92,6 +92,6 @@ while True:
         print("A is pressed!")
         m.next_mode()
     # TODO re-attempt wifi if disconnected (need to be careful not to block ticks too long)
-    sleep(0.01)
+    sleep(0.08)
 
 context.net.led.off()
