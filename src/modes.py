@@ -20,15 +20,13 @@ class BaseMode:
 
 
 class LinkedIn(BaseMode):
-    text = None
-    # Using this to only update once per boot
-    is_updated = False
     name = "linkedin"
     filename = 'linkedin.txt'
 
     def __init__(self, context):
         super().__init__(context)
         self.text = None
+        # Using this to only update once per boot
         self.is_updated = False
 
     # runs API calls to update text
