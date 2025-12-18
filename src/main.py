@@ -23,18 +23,18 @@ width = context.scroll.get_width()
 height = context.scroll.get_height()
 if context.net.is_connected:
     # once connected, show checkmark
-    context.scroll.set_pixel(0, height-2, context.brightness)
-    context.scroll.set_pixel(1, height-1, context.brightness)
-    context.scroll.set_pixel(2, height-2, context.brightness)
-    context.scroll.set_pixel(3, height-3, context.brightness)
-    context.scroll.set_pixel(4, height-4, context.brightness)
+    context.scroll.set_pixel(0, height-2, context.brightness.value)
+    context.scroll.set_pixel(1, height-1, context.brightness.value)
+    context.scroll.set_pixel(2, height-2, context.brightness.value)
+    context.scroll.set_pixel(3, height-3, context.brightness.value)
+    context.scroll.set_pixel(4, height-4, context.brightness.value)
 else:
     # if not connected, show X
-    context.scroll.set_pixel(0, height-3, context.brightness)
-    context.scroll.set_pixel(0, height-1, context.brightness)
-    context.scroll.set_pixel(1, height-2, context.brightness)
-    context.scroll.set_pixel(2, height-3, context.brightness)
-    context.scroll.set_pixel(2, height-1, context.brightness)
+    context.scroll.set_pixel(0, height-3, context.brightness.value)
+    context.scroll.set_pixel(0, height-1, context.brightness.value)
+    context.scroll.set_pixel(1, height-2, context.brightness.value)
+    context.scroll.set_pixel(2, height-3, context.brightness.value)
+    context.scroll.set_pixel(2, height-1, context.brightness.value)
 context.scroll.show()
 sleep(2)
 
@@ -82,11 +82,11 @@ while True:
     # increase brightness on X
     if is_button_pressed('X'):
         print("X is pressed!")
-        context.set_rel_brightness(BRIGHTNESS_INCREMENT)
+        context.brightness.set_rel_value(BRIGHTNESS_INCREMENT)
     # decrease brightness on Y
     if is_button_pressed('Y'):
         print("Y is pressed!")
-        context.set_rel_brightness(-BRIGHTNESS_INCREMENT)
+        context.brightness.set_rel_value(-BRIGHTNESS_INCREMENT)
     # TODO re-attempt wifi if disconnected (need to be careful not to block ticks too long)
     sleep(0.01)
 

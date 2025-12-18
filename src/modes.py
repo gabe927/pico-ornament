@@ -89,7 +89,7 @@ class LinkedIn(BaseMode):
     def run_tick(self):
         self.context.graphics.set_pen(0)
         self.context.graphics.clear()
-        self.context.graphics.set_pen(self.context.brightness)
+        self.context.graphics.set_pen(self.context.brightness.value)
         self.context.graphics.text(self.text, self._t, 0, scale=1, spacing=1)
         self.context.scroll.update(self.context.graphics)
         self._t -= 1
