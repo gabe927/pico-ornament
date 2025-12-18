@@ -1,6 +1,7 @@
 import secrets
 import requests
 import time
+import ntptime
 from networking import Networking
 
 class BaseMode:
@@ -118,9 +119,95 @@ class MerryChristmas(BaseMode):
             self._t = self.context.scroll.get_width()
 
 
+class Countdown(BaseMode):
+    name = "countdown"
+
+    def __init__(self, context) -> None:
+        super().__init__(context)
+        self.error_prefix = "SOME TIME"
+        self.suffix_text = " UNTIL CHRISTMAS"
+        self.text = self.error_prefix + self.suffix_text
+        self.is_final_countdown = False
+        self.resets_until_sync = 20
+        self._resets_remaining_until_sync = 0
+
+    def seconds_until_christmas(self, sync=False):
+
+        if sync:
+            # Sync RTC with NTP (UTC)
+            try:
+                ntptime.settime()
+            except:
+                pass
+
+        # Get current UTC time as seconds
+        now_utc = time.time()
+
+        # Convert to Eastern Standard Time
+        now_et = now_utc + (-5 * 3600)
+        now = time.gmtime(now_et)
+
+        year, month, day = now[0], now[1], now[2]
+
+        # Check if today is Christmas Day
+        is_christmas = (month == 12 and day == 25)
+
+        # Christmas this year
+        christmas = (year, 12, 25, 0, 0, 0, 0, 0)
+
+        now_seconds = time.mktime(now)
+        christmas_seconds = time.mktime(christmas)
+
+        # If Christmas has already passed, use next year
+        if now_seconds > christmas_seconds:
+            christmas = (year + 1, 12, 25, 0, 0, 0, 0, 0)
+            christmas_seconds = time.mktime(christmas)
+
+        return int(christmas_seconds - now_seconds), is_christmas
+    
+    def reset(self, skip_sync=False) -> None:
+        sync = (self._resets_remaining_until_sync == 0) and not skip_sync
+        if self._resets_remaining_until_sync == 0:
+            self._resets_remaining_until_sync = self.resets_until_sync
+        s, is_christmas = self.seconds_until_christmas(sync)
+        self.is_final_countdown = False
+        if not self.context.net.is_connected:
+            self.text = self.error_prefix + self.suffix_text
+        elif s < 99:
+            self.is_final_countdown = True
+            self.text = str(s)
+        elif is_christmas:
+            self.text = "MERRY CHRISTMAS!!!"
+        else:
+            self.text = str(s) + " SECONDS" + self.suffix_text
+        
+        self._t = self.context.scroll.get_width()
+        self.context.graphics.set_font("bitmap8")
+        # add 1 to clear screen when device hangs during sync
+        self._wrap = -(self.context.graphics.measure_text(self.text, scale=0) + 1)
+
+    def run_tick(self) -> None:
+        self.context.graphics.set_pen(0)
+        self.context.graphics.clear()
+        self.context.graphics.set_pen(self.context.brightness.value)
+        # don't wrap the text during the final countdown
+        if self.is_final_countdown:
+            self.context.graphics.text(self.text, 0, 0, scale=1, spacing=1)
+            self.context.scroll.update(self.context.graphics)
+            # Skip the NTP sync during the final countdown so we're not syncing every tick
+            self.reset(skip_sync=True)
+        else:
+            self.context.graphics.text(self.text, self._t, 0, scale=1, spacing=1)
+            self.context.scroll.update(self.context.graphics)
+            self._t -= 1
+            if self._t <= self._wrap:
+                # update time
+                self.reset()
+
+
 class Modes:
     filename = 'mode.txt'
-    mode_classes = [LinkedIn, MerryChristmas]
+    mode_classes = [LinkedIn, MerryChristmas, Countdown]
 
     def __init__(self, context) -> None:
         self.context = context
