@@ -87,6 +87,10 @@ while True:
     if is_button_pressed('Y'):
         print("Y is pressed!")
         context.brightness.set_rel_value(-BRIGHTNESS_INCREMENT)
+    # set the next mode
+    if is_button_pressed('A'):
+        print("A is pressed!")
+        m.next_mode()
     # TODO re-attempt wifi if disconnected (need to be careful not to block ticks too long)
     sleep(0.01)
 

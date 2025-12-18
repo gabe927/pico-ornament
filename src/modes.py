@@ -131,6 +131,13 @@ class Modes:
         with open(self.filename, 'w') as f:
             f.write(self.active_mode)
 
+    # sets the active mode to the next mode in the mode_classes list
+    def next_mode(self) -> None:
+        mode_keys = list(self.modes.keys())
+        i = mode_keys.index(self.active_mode)
+        # use the modulo to wrap the index to the beginning
+        self.set_mode(mode_keys[(i + 1) % len(mode_keys)])
+
     # sets the active mode, stores it to file, and calls the mode's reset
     def set_mode(self, mode:str) -> None:
         if mode in self.modes:
